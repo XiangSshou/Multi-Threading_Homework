@@ -89,8 +89,57 @@ void doubly_linked_list::merge_sort(node* p, int i)
 
 void doubly_linked_list::merge(node* p1, int i1, node* p2, int i2)
 {
+	int i = 0;
+	while (i < i1 + i2 && p1 != nullptr && p2 != nullptr) {
+		if (p1->value > p2->value) {
+			node *temp1, *temp2;
+			temp1 = p1->next;
+			temp2 = p2->next;
+			if (p2->previous != nullptr)
+				p2->previous->next = temp2;
+			else
+				head = temp2;
+			if (temp2 != nullptr)
+				temp2->previous = p2->previous;
+			else
+				tail = p2->previous;
+			if (p1->previous != nullptr)
+				p1->previous->next = p2;
+			else
+				head = p2;
+			p2->previous = p1->previous;
+			p2->next = p1;
+			p1->previous = p2;
+			p1 = temp1;
+			p2 = temp2;
+		}
+		else {
+			node *temp1, *temp2;
+			temp1 = p1->next;
+			temp2 = p2->next;
+			// remove p2
+			if (p2->previous != nullptr)
+				p2->previous->next = temp2;
+			else
+				head = temp2;
+			if (temp2 != nullptr)
+				temp2->previous = p2->previous;
+			else
+				tail = p2->previous;
+			// insert p2 after p1
+			if (temp1 != nullptr)
+				temp1->previous = p2;
+			else
+				tail = p2;
+			p2->previous = p1->previous;
+			p2->next = p1;
+			p1->previous = p2;
+			p1 = temp1;
+			p2 = temp2;
+		}
+		i++;
+	}
 }
-
 
 
 int main() {
