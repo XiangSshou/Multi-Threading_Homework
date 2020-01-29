@@ -21,6 +21,7 @@ It is alright if your implementation does not require the extra node or global p
 */
 
 #include <iostream>
+#include <thread>
 
 using namespace std;
 
@@ -85,11 +86,27 @@ void doubly_linked_list::print_backward() {
 
 void doubly_linked_list::merge_sort(node* p, int i)
 {
+	if (i > 1) {
+		int first = i / 2;
+		int second = i - first;
+		node* p2 = p, *p1 = p;
+		for (int j = 0; j < first; j++) {
+			p2 = p2->next;
+		}
+		merge_sort(p2, second);
+		for (int j = 0; j < first; j++) {
+			p2 = p2->next;
+		}
+		merge_sort(p, first);
+		merge(p, first, p2, second);
+	}
+	return;
 }
 
 void doubly_linked_list::merge(node* p1, int i1, node* p2, int i2)
 {
 	int i = 0;
+	node* n1 = p1, * n2 = p2;
 	while (i < i1 + i2 && p1 != nullptr && p2 != nullptr) {
 		if (p1->value > p2->value) {
 			node *temp1, *temp2;
