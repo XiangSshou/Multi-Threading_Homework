@@ -149,29 +149,29 @@ void doubly_linked_list::merge(node* p1, int i1, node* p2, int i2)
 		else {
 			p1 = tail;
 		}
-		node* temp, *temp2 = p2->previous, *temp3 = p2;
+		node* temp, *temp2 = p2;
 		while (j2 < i2-1) {
-			temp3 = temp3->next;
+			temp2 = temp2->next;
 			j2++;
 		}
-		if (temp2 != nullptr) {
-			temp2->next = temp3->next;
+		if (p2->previous != nullptr) {
+			p2->previous->next = temp2->next;
 		}
 		else {
-			head = temp3->next;
+			head = temp2->next;
 		}
-		if(temp3->next != nullptr){
-			temp3->next->previous = temp2;
+		if(temp2->next != nullptr){
+			temp2->next->previous = temp2;
 		}
 		temp = p1->next;
 		p1->next = p2;
 		p2->previous = p1;
-		temp3->next = temp;
+		temp2->next = temp;
 		if (temp != nullptr) {
-			temp->previous = temp3;
+			temp->previous = temp2;
 		}
 		else {
-			tail = temp3;
+			tail = temp2;
 		}
 	}
 }
