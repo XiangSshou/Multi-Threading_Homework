@@ -1,3 +1,6 @@
+//HW1 by Yixiang Zuo
+//SU Net ID: yzuo12  SUID: 767440201
+
 //CIS600/CSE691  HW1
 //Due: 11:59PM, Friday(1/31)
 
@@ -89,7 +92,7 @@ void doubly_linked_list::merge_sort(node* p, int i)
 	if (i > 1) {
 		int first = i / 2;
 		int second = i - first;
-		node* p2 = p, *p1 = p;
+		node* p2 = p, * p1 = p;
 		// get p2
 		for (int j = 0; j < first; j++) {
 			p2 = p2->next;
@@ -116,7 +119,7 @@ void doubly_linked_list::merge(node* p1, int i1, node* p2, int i2)
 	int j1 = 0, j2 = 0;
 	while (j2 < i2 && j1 < i1) {
 		if (p1->value > p2->value) {
-			node *temp;
+			node* temp;
 			temp = p2->next;
 			if (p2->previous != nullptr)
 				p2->previous->next = temp;
@@ -149,8 +152,8 @@ void doubly_linked_list::merge(node* p1, int i1, node* p2, int i2)
 		else {
 			p1 = tail;
 		}
-		node* temp, *temp2 = p2;
-		while (j2 < i2-1) {
+		node* temp, * temp2 = p2;
+		while (j2 < i2 - 1) {
 			temp2 = temp2->next;
 			j2++;
 		}
@@ -160,7 +163,7 @@ void doubly_linked_list::merge(node* p1, int i1, node* p2, int i2)
 		else {
 			head = temp2->next;
 		}
-		if(temp2->next != nullptr){
+		if (temp2->next != nullptr) {
 			temp2->next->previous = temp2;
 		}
 		temp = p1->next;
