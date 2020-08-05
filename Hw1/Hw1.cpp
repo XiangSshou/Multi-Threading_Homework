@@ -1,3 +1,6 @@
+//HW1 by Yixiang Zuo
+//SU Net ID: yzuo12  SUID: 767440201
+
 //CIS600/CSE691  HW1
 //Due: 11:59PM, Friday(1/31)
 
@@ -21,6 +24,7 @@ It is alright if your implementation does not require the extra node or global p
 */
 
 #include <iostream>
+#include <thread>
 
 using namespace std;
 
@@ -85,22 +89,44 @@ void doubly_linked_list::print_backward() {
 
 void doubly_linked_list::merge_sort(node* p, int i)
 {
+	if (i > 1) {
+		int first = i / 2;
+		int second = i - first;
+		node* p2 = p, * p1 = p;
+		// get p2
+		for (int j = 0; j < first; j++) {
+			p2 = p2->next;
+		}
+		merge_sort(p2, second);
+		// get p2 after sort
+		p2 = p1;
+		for (int j = 0; j < first; j++) {
+			p2 = p2->next;
+		}
+		merge_sort(p1, first);
+		// get p1 after sort
+		p1 = p2;
+		for (int j = 0; j < first; j++) {
+			p1 = p1->previous;
+		}
+		merge(p1, first, p2, second);
+	}
+	return;
 }
 
 void doubly_linked_list::merge(node* p1, int i1, node* p2, int i2)
 {
-	int i = 0;
-	while (i < i1 + i2 && p1 != nullptr && p2 != nullptr) {
+	int j1 = 0, j2 = 0;
+	while (j2 < i2 && j1 < i1) {
 		if (p1->value > p2->value) {
-			node *temp1, *temp2;
-			temp1 = p1->next;
-			temp2 = p2->next;
+			node* temp;
+			temp = p2->next;
 			if (p2->previous != nullptr)
-				p2->previous->next = temp2;
+				p2->previous->next = temp;
 			else
-				head = temp2;
-			if (temp2 != nullptr)
-				temp2->previous = p2->previous;
+				head = temp;
+			if (temp != nullptr)
+				temp->previous = p2->previous;
 			else
 				tail = p2->previous;
 			if (p1->previous != nullptr)
@@ -110,34 +136,46 @@ void doubly_linked_list::merge(node* p1, int i1, node* p2, int i2)
 			p2->previous = p1->previous;
 			p2->next = p1;
 			p1->previous = p2;
-			p1 = temp1;
-			p2 = temp2;
+			p2 = temp;
+			j2++;
 		}
 		else {
-			node *temp1, *temp2;
-			temp1 = p1->next;
-			temp2 = p2->next;
-			// remove p2
-			if (p2->previous != nullptr)
-				p2->previous->next = temp2;
-			else
-				head = temp2;
-			if (temp2 != nullptr)
-				temp2->previous = p2->previous;
-			else
-				tail = p2->previous;
-			// insert p2 after p1
-			if (temp1 != nullptr)
-				temp1->previous = p2;
-			else
-				tail = p2;
-			p2->previous = p1->previous;
-			p2->next = p1;
-			p1->previous = p2;
-			p1 = temp1;
-			p2 = temp2;
+			p1 = p1->next;
+			j1++;
 		}
-		i++;
+	}
+	// add the rest of second list after the first one
+	if (j2 < i2) {
+		if (p1 != nullptr) {
+			p1 = p1->previous;
+		}
+		else {
+			p1 = tail;
+		}
+		node* temp, * temp2 = p2;
+		while (j2 < i2 - 1) {
+			temp2 = temp2->next;
+			j2++;
+		}
+		if (p2->previous != nullptr) {
+			p2->previous->next = temp2->next;
+		}
+		else {
+			head = temp2->next;
+		}
+		if (temp2->next != nullptr) {
+			temp2->next->previous = temp2;
+		}
+		temp = p1->next;
+		p1->next = p2;
+		p2->previous = p1;
+		temp2->next = temp;
+		if (temp != nullptr) {
+			temp->previous = temp2;
+		}
+		else {
+			tail = temp2;
+		}
 	}
 }
 
@@ -167,6 +205,26 @@ int main() {
 	You have to still use the same merge_sort and merge functions implemented above.
 	You will need to do some extra work within main funciton.
 	*/
+	thread t1, t2;
+	node* p1 = d2.head, * p2 = d2.head, * help = new node(1000);
+	for (int i = 0; i < 25; i++) {
+		p2 = p2->next;
+	}
+	help->previous = p2->previous;
+	p2->previous->next = help;
+	p2->previous = help;
+	help->next = p2;
+	t1 = thread(&doubly_linked_list::merge_sort, &d2, p1, 25);
+	t2 = thread(&doubly_linked_list::merge_sort, &d2, p2, 25);
+	t1.join();
+	t2.join();
+	help->previous->next = help->next;
+	help->next->previous = help->previous;
+	p2 = help->next;
+	p1 = d2.head;
+	delete help;
+	d2.merge(p1, 25, p2, 25);
+
 	d2.print_forward();
 	d2.print_backward();
 	return 0;
